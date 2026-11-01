@@ -1,0 +1,104 @@
+/* Custom Polish for Munazzem App */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
+
+body {
+    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.6);
+}
+
+/* Tab Animation */
+.tab-btn.active {
+    background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px 0 rgba(5, 150, 105, 0.35);
+}
+
+/* Task Item Animation */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.task-card {
+    animation: slideInUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Alert banner transition */
+#activeAlertBanner.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Priority Badges */
+.badge-high {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+.dark .badge-high {
+    background-color: #450a0a;
+    color: #fca5a5;
+    border: 1px solid #7f1d1d;
+}
+
+.badge-medium {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fcd34d;
+}
+.dark .badge-medium {
+    background-color: #451a03;
+    color: #fcd34d;
+    border: 1px solid #78350f;
+}
+
+.badge-normal {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+.dark .badge-normal {
+    background-color: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+}
+
+/* Prayer Active & Checked States */
+.prayer-card.is-next {
+    border-color: #34d399 !important;
+    background: rgba(16, 185, 129, 0.15) !important;
+    box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.3);
+}
+
+.prayer-check-btn.completed {
+    background: #059669 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+    font-weight: 800;
+}

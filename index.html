@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مُنظِّم | رفيقك اليومي للبركة وتنظيم الوقت والمهام</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        },
+                        indigoBrand: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 min-h-screen flex flex-col antialiased">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 lg:px-8 py-3 transition-colors shadow-xs">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <!-- Brand & Tagline -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                        مُنظِّم
+                        <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800">
+                            صلاتي وحياتي
+                        </span>
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">«إن الصلاة كانت على المؤمنين كتاباً موقوتاً»</p>
+                </div>
+            </div>
+
+            <!-- Top Controls & Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
+                <!-- City Selector for Prayer Times -->
+                <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 text-xs text-slate-700 dark:text-slate-300">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                    <select id="citySelect" class="bg-transparent border-none outline-none text-xs font-bold cursor-pointer">
+                        <option value="Cairo,Egypt">القاهرة، مصر</option>
+                        <option value="Alexandria,Egypt">الإسكندرية، مصر</option>
+                        <option value="Giza,Egypt">الجيزة، مصر</option>
+                        <option value="Mansoura,Egypt">المنصورة، مصر</option>
+                        <option value="Mecca,Saudi Arabia">مكة المكرمة، السعودية</option>
+                        <option value="Medina,Saudi Arabia">المدينة المنورة، السعودية</option>
+                        <option value="Riyadh,Saudi Arabia">الرياض، السعودية</option>
+                        <option value="Dubai,United Arab Emirates">دبي، الإمارات</option>
+                        <option value="Amman,Jordan">عمّان، الأردن</option>
+                    </select>
+                </div>
+
+                <!-- Azkar Modal Button -->
+                <button id="openAzkarBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold transition shadow-xs">
+                    <i data-lucide="book-heart" class="w-4 h-4"></i>
+                    <span>حصن المسلم (الأذكار)</span>
+                </button>
+
+                <!-- Notifications Toggle -->
+                <button id="notifyBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 hover:bg-amber-100 text-xs font-bold transition shadow-xs">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                    <span id="notifyStatusText">تفعيل التنبيهات</span>
+                </button>
+
+                <!-- Audio Settings Button -->
+                <button id="audioSettingsModalBtn" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition" title="إعدادات صوت الأذان والتنبيهات">
+                    <i data-lucide="volume-2" class="w-4.5 h-4.5"></i>
+                </button>
+
+                <!-- Dark Mode -->
+                <button id="themeToggleBtn" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition" title="تبديل الوضع الليلي / النهاري">
+                    <i data-lucide="moon" class="w-4.5 h-4.5 hidden dark:block"></i>
+                    <i data-lucide="sun" class="w-4.5 h-4.5 block dark:hidden"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-7">
+
+        <!-- ============================================================== -->
+        <!-- 🕌 HERO SECTION: الصلاة عماد الدين وبركة اليوم (MAIN FOCUS) -->
+        <!-- ============================================================== -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 border border-emerald-900/50 shadow-2xl text-white p-6 sm:p-8">
+            <!-- Decorative Background Pattern -->
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 space-y-6">
+                <!-- Top Row: Hijri Date, Next Prayer Highlight & Quote -->
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-emerald-800/40">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                                أساس صلاح يومك وإنجازك
+                            </span>
+                            <span id="hijriDateDisplay" class="text-xs text-emerald-200/80 font-medium">جاري تحديث التاريخ...</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2">
+                            صلواتك أولاً.. بها يُبارَك وقتك
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
+                            قال رسول الله ﷺ: «أول ما يُحاسب عليه العبد يوم القيامة الصلاة، فإن صلحت صلح سائر عمله».
+                        </p>
+                    </div>
+
+                    <!-- Next Prayer Live Countdown Widget -->
+                    <div class="w-full lg:w-auto bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:px-6 flex items-center justify-between lg:justify-start gap-4 shadow-lg">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center text-emerald-300">
+                            <i data-lucide="clock" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-emerald-200/80 font-semibold block">الصلاة القادمة:</span>
+                            <h3 id="nextPrayerName" class="text-xl font-black text-white">جاري الحساب...</h3>
+                            <div class="text-xs font-mono font-bold text-amber-300 flex items-center gap-1 mt-0.5">
+                                <span>متبقي:</span>
+                                <span id="nextPrayerCountdown">--:--:--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prayer Cards & Checklist Grid (الفجر، الشروق، الظهر، العصر، المغرب، العشاء) -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs sm:text-sm font-bold text-emerald-200 flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+                            جدول الصلوات وتأكيد الأداء اليومي:
+                        </h4>
+                        <!-- Daily Prayer Score -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-300">إنجاز صلوات اليوم:</span>
+                            <span id="prayerProgressText" class="text-xs font-bold text-emerald-300 px-2 py-0.5 rounded-lg bg-emerald-900/60 border border-emerald-700">0 / 5</span>
+                        </div>
+                    </div>
+
+                    <!-- Prayer Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="prayersGrid">
+                        <!-- Fajr -->
+                        <div class="prayer-card p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 transition flex flex-col justify-between" data-prayer="fajr">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-300">صلاة الفجر</span>
+                                <i data-lucide="sunrise" class="w-4 h-4 text-emerald-400"></i>
+                            </div>
+                            <div class="my-2">
+                                <span class="prayer-time text-lg font-black tracking-tight font-mono">--:--</span>
+                            </div>
+                            <button onclick="togglePrayerStatus('fajr')" class="prayer-check-btn w-full py-1.5 px-2 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1.5 border-white/20 bg-white/5 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>صليت</span>
+                            </button>
+                        </div>
+
+                        <!-- Sunrise (الشروق) -->
+                        <div class="prayer-card p-3 rounded-2xl bg-white/5 border border-white/10 opacity-70 flex flex-col justify-between" data-prayer="sunrise">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-200">الشروق (الضحى)</span>
+                                <i data-lucide="sun" class="w-4 h-4 text-amber-300"></i>
+                            </div>
+                            <div class="my-2">
+                                <span class="prayer-time text-lg font-black tracking-tight font-mono">--:--</span>
+                            </div>
+                            <span class="text-[11px] text-center text-amber-200/70 font-medium py-1">صلاة الضحى سنة</span>
+                        </div>
+
+                        <!-- Dhuhr -->
+                        <div class="prayer-card p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 transition flex flex-col justify-between" data-prayer="dhuhr">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-300">صلاة الظهر</span>
+                                <i data-lucide="sun-medium" class="w-4 h-4 text-emerald-400"></i>
+                            </div>
+                            <div class="my-2">
+                                <span class="prayer-time text-lg font-black tracking-tight font-mono">--:--</span>
+                            </div>
+                            <button onclick="togglePrayerStatus('dhuhr')" class="prayer-check-btn w-full py-1.5 px-2 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1.5 border-white/20 bg-white/5 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>صليت</span>
+                            </button>
+                        </div>
+
+                        <!-- Asr -->
+                        <div class="prayer-card p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 transition flex flex-col justify-between" data-prayer="asr">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-300">صلاة العصر</span>
+                                <i data-lucide="cloud-sun" class="w-4 h-4 text-emerald-400"></i>
+                            </div>
+                            <div class="my-2">
+                                <span class="prayer-time text-lg font-black tracking-tight font-mono">--:--</span>
+                            </div>
+                            <button onclick="togglePrayerStatus('asr')" class="prayer-check-btn w-full py-1.5 px-2 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1.5 border-white/20 bg-white/5 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>صليت</span>
+                            </button>
+                        </div>
+
+                        <!-- Maghrib -->
+                        <div class="prayer-card p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 transition flex flex-col justify-between" data-prayer="maghrib">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-300">صلاة المغرب</span>
+                                <i data-lucide="sunset" class="w-4 h-4 text-emerald-400"></i>
+                            </div>
+                            <div class="my-2">
+                                <span class="prayer-time text-lg font-black tracking-tight font-mono">--:--</span>
+                            </div>
+                            <button onclick="togglePrayerStatus('maghrib')" class="prayer-check-btn w-full py-1.5 px-2 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1.5 border-white/20 bg-white/5 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>صليت</span>
+                            </button>
+                        </div>
+
+                        <!-- Isha -->
+                        <div class="prayer-card p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 transition flex flex-col justify-between" data-prayer="isha">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-300">صلاة العشاء</span>
+                                <i data-lucide="moon" class="w-4 h-4 text-emerald-400"></i>
+                            </div>
+                            <div class="my-2">
+                                <span class="prayer-time text-lg font-black tracking-tight font-mono">--:--</span>
+                            </div>
+                            <button onclick="togglePrayerStatus('isha')" class="prayer-check-btn w-full py-1.5 px-2 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1.5 border-white/20 bg-white/5 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>صليت</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- 📊 REAL-TIME DASHBOARD STATS -->
+        <!-- ============================================================== -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">المهام الكلية الخاصة بك</p>
+                    <h3 id="statTotal" class="text-2xl font-black text-slate-800 dark:text-white mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                    <i data-lucide="list-checks" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">المهام المنجزة</p>
+                    <h3 id="statCompleted" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">مهام المذاكرة</p>
+                    <h3 id="statStudy" class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">الرياضة والجيم</p>
+                    <h3 id="statFitness" class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                    <i data-lucide="dumbbell" class="w-5 h-5"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- 🧭 WORKSPACE TABS & PRIMARY ACTION -->
+        <!-- ============================================================== -->
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 flex-wrap gap-3">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+                <button class="tab-btn active px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-emerald-600 text-white shadow-sm" data-tab="tasks">
+                    <i data-lucide="check-square" class="w-4 h-4"></i>
+                    <span>قائمة المهام اليومية</span>
+                </button>
+                <button class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="pomodoro">
+                    <i data-lucide="timer" class="w-4 h-4 text-indigo-500"></i>
+                    <span>مؤقت المذاكرة (بومودورو)</span>
+                </button>
+                <button class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="workout">
+                    <i data-lucide="dumbbell" class="w-4 h-4 text-rose-500"></i>
+                    <span>مؤقت تمارين وراحة الجيم</span>
+                </button>
+                <button class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="timeline">
+                    <i data-lucide="calendar-range" class="w-4 h-4 text-amber-500"></i>
+                    <span>جدول اليوم الزمني</span>
+                </button>
+            </div>
+
+            <!-- Primary Add Task Button -->
+            <button id="openNewTaskBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/25 transition flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>+ إضافة مهمة بنفسك</span>
+            </button>
+        </div>
+
+        <!-- ==================== TAB 1: USER TASKS LIST ==================== -->
+        <section id="tab-tasks" class="space-y-5 tab-content block">
+            <!-- Filter & Search Toolbar -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+                <!-- Category Pills -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs">
+                    <button class="filter-pill active px-3 py-1.5 rounded-lg font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 transition" data-filter="all">جميع المهام</button>
+                    <button class="filter-pill px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-filter="worship">🕌 عبادات وصلوات</button>
+                    <button class="filter-pill px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-filter="study">📚 المذاكرة</button>
+                    <button class="filter-pill px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-filter="fitness">🏋️ الرياضة والجيم</button>
+                    <button class="filter-pill px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-filter="personal">⭐ عام وشخصي</button>
+                    <button class="filter-pill px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-filter="completed">✅ المنجزة</button>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative min-w-[220px]">
+                    <i data-lucide="search" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input id="searchInput" type="text" placeholder="ابحث في مهامك الخاصة..." class="w-full pl-3 pr-9 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <!-- Task List Container -->
+            <div id="taskList" class="space-y-3">
+                <!-- Only tasks added by user will appear here -->
+            </div>
+
+            <!-- Clean Empty State (No arbitrary forced tasks) -->
+            <div id="emptyState" class="hidden text-center py-16 px-4 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <i data-lucide="clipboard-list" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">القائمة فارغة تماماً وجاهزة لتنظيمك</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+                    لن يتم إضافة أي مهام من تلقاء نفسها؛ أضف الآن مهامك المحددة للمذاكرة، الجيم، أو المواعيد الشخصية مع وقت وتنبيه صوتي دقيق.
+                </p>
+                <button onclick="document.getElementById('openNewTaskBtn').click()" class="mt-4 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-md shadow-emerald-600/20">
+                    + أضف مهمتك الأولى الآن
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: POMODORO TIMER ==================== -->
+        <section id="tab-pomodoro" class="tab-content hidden">
+            <div class="max-w-xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm text-center space-y-6">
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-xs font-bold mb-2">
+                        تقنية بومودورو للمذاكرة والتركيز 📚
+                    </span>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-white">مؤقت المذاكرة والتركيز الذهني</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">25 دقيقة مذاكرة حقيقية تليها 5 دقائق استراحة مع جرس تنبيه صوتي.</p>
+                </div>
+
+                <div class="flex items-center justify-center gap-2">
+                    <button id="pomoModeFocus" class="pomo-mode active px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition">جلسة مذاكرة (25د)</button>
+                    <button id="pomoModeShortBreak" class="pomo-mode px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">راحة قصيرة (5د)</button>
+                    <button id="pomoModeLongBreak" class="pomo-mode px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">راحة طويلة (15د)</button>
+                </div>
+
+                <div class="py-6">
+                    <div id="pomoTimeDisplay" class="text-6xl sm:text-7xl font-black tracking-tight text-slate-900 dark:text-white font-mono">
+                        25:00
+                    </div>
+                    <p id="pomoStatusText" class="text-xs sm:text-sm font-bold text-indigo-600 dark:text-indigo-400 mt-2">جاهز للمذاكرة والتركيز!</p>
+                </div>
+
+                <div class="flex items-center justify-center gap-3">
+                    <button id="pomoToggleBtn" class="px-8 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base shadow-lg shadow-indigo-500/30 transition flex items-center gap-2">
+                        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                        <span id="pomoBtnLabel">بدء الجلسة</span>
+                    </button>
+                    <button id="pomoResetBtn" class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="إعادة ضبط">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-around text-xs text-slate-500">
+                    <div>
+                        <span class="block text-lg font-bold text-slate-800 dark:text-white" id="pomoSessionCount">0</span>
+                        <span>جلسات مكتملة اليوم</span>
+                    </div>
+                    <div>
+                        <span class="block text-lg font-bold text-slate-800 dark:text-white" id="pomoTotalMinutes">0 د</span>
+                        <span>إجمالي وقت المذاكرة</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: WORKOUT REST TIMER ==================== -->
+        <section id="tab-workout" class="tab-content hidden">
+            <div class="max-w-xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm text-center space-y-6">
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-xs font-bold mb-2">
+                        مساعد الجيم والرياضة 🏋️
+                    </span>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-white">مؤقت فترات الراحة بين الجولات</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">اضبط وقت الراحة بين المجموعات وسينبهك بصوت صافرات عند آخر 3 ثوانٍ!</p>
+                </div>
+
+                <div class="flex items-center justify-center gap-2 flex-wrap">
+                    <button class="workout-preset px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-600 hover:text-white transition" data-sec="30">30 ثانية</button>
+                    <button class="workout-preset active px-3 py-2 rounded-xl text-xs font-bold bg-rose-600 text-white transition" data-sec="60">60 ثانية (دقيقة)</button>
+                    <button class="workout-preset px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-600 hover:text-white transition" data-sec="90">90 ثانية</button>
+                    <button class="workout-preset px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-600 hover:text-white transition" data-sec="120">دقيقتين</button>
+                </div>
+
+                <div class="py-6">
+                    <div id="workoutTimeDisplay" class="text-6xl sm:text-7xl font-black tracking-tight text-rose-600 dark:text-rose-400 font-mono">
+                        01:00
+                    </div>
+                    <p id="workoutStatusText" class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 mt-2">جاهز لبدء الراحة بعد التمرين</p>
+                </div>
+
+                <div class="flex items-center justify-center gap-3">
+                    <button id="workoutToggleBtn" class="px-8 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-base shadow-lg shadow-rose-500/30 transition flex items-center gap-2">
+                        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                        <span id="workoutBtnLabel">بدء مؤقت الراحة</span>
+                    </button>
+                    <button id="workoutResetBtn" class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="إعادة ضبط">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: TIMELINE ==================== -->
+        <section id="tab-timeline" class="tab-content hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="clock" class="w-5 h-5 text-amber-500"></i>
+                            الجدول الزمني المجمع لليوم (صلواتك ومهامك)
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">يجمع مواقيت الصلاة مع المواعيد والمهام التي تحددها بالساعة.</p>
+                    </div>
+                    <span id="currentDateDisplay" class="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl"></span>
+                </div>
+
+                <div id="timelineContainer" class="space-y-3 relative pr-2">
+                    <!-- Dynamic timeline combining Prayers & User Tasks -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== MODAL: ADD / EDIT TASK ==================== -->
+    <div id="taskModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600"></i>
+                    إضافة مهمة جديدة
+                </h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="taskForm" class="space-y-4">
+                <input type="hidden" id="editTaskId" value="">
+
+                <!-- Task Title -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">اسم المهمة أو التذكير *</label>
+                    <input id="taskTitle" type="text" required placeholder="اكتب ما تريد إنجازه بدقة..." class="w-full px-4 py-2.5 text-sm rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white">
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">التصنيف</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <label class="cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-center flex flex-col items-center gap-1 hover:border-emerald-500 transition has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/50">
+                            <input type="radio" name="taskCategory" value="worship" class="hidden">
+                            <i data-lucide="heart-handshake" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">عبادة وطاعة</span>
+                        </label>
+
+                        <label class="cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-center flex flex-col items-center gap-1 hover:border-indigo-500 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 dark:has-[:checked]:bg-indigo-950/50">
+                            <input type="radio" name="taskCategory" value="study" class="hidden" checked>
+                            <i data-lucide="book-open" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">مذاكرة</span>
+                        </label>
+
+                        <label class="cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-center flex flex-col items-center gap-1 hover:border-rose-500 transition has-[:checked]:border-rose-600 has-[:checked]:bg-rose-50 dark:has-[:checked]:bg-rose-950/50">
+                            <input type="radio" name="taskCategory" value="fitness" class="hidden">
+                            <i data-lucide="dumbbell" class="w-4 h-4 text-rose-600 dark:text-rose-400"></i>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">رياضة / جيم</span>
+                        </label>
+
+                        <label class="cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-center flex flex-col items-center gap-1 hover:border-amber-500 transition has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50 dark:has-[:checked]:bg-amber-950/50">
+                            <input type="radio" name="taskCategory" value="personal" class="hidden">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">عام وشخصي</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Date & Time -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">تاريخ المهمة</label>
+                        <input id="taskDate" type="date" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">وقت التنبيه (اختياري)</label>
+                        <input id="taskTime" type="time" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white">
+                    </div>
+                </div>
+
+                <!-- Sound & Priority -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">صوت ونغمة التنبيه</label>
+                        <div class="flex gap-1.5">
+                            <select id="taskSound" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white">
+                                <option value="adhan">🕌 تكبيرات الأذان (Allahu Akbar)</option>
+                                <option value="bell">⏰ جرس رنان للمذاكرة</option>
+                                <option value="chime" selected>🔔 نغمة هادئة لطيفة</option>
+                                <option value="digital">📟 منبه رقمي</option>
+                                <option value="energetic">⚡ حماسي للرياضة</option>
+                                <option value="zen">🧘 وعاء هدوء</option>
+                            </select>
+                            <button type="button" id="previewTaskSoundBtn" class="px-2.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200" title="تجربة الصوت">
+                                <i data-lucide="play" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">درجة الأولوية</label>
+                        <select id="taskPriority" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white">
+                            <option value="normal">عادية</option>
+                            <option value="medium">متوسطة</option>
+                            <option value="high">عالية جداً 🔥</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">تفاصيل أو ملاحظات إضافية (اختياري)</label>
+                    <textarea id="taskNotes" rows="2" placeholder="أرقام الصفحات، تفاصيل التمارين، إلخ..." class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" id="cancelTaskBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition">
+                        حفظ المهمة والتذكير
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: حصن المسلم والأذكار ==================== -->
+    <div id="azkarModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-xl max-h-[85vh] flex flex-col rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-emerald-600"></i>
+                    حصن المسلم — أذكار الصباح والمساء وبعد الصلاة
+                </h3>
+                <button id="closeAzkarModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Azkar Category Buttons -->
+            <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2 text-xs">
+                <button class="azkar-tab active px-3 py-1.5 rounded-lg font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" data-cat="afterPrayer">أذكار بعد الصلاة</button>
+                <button class="azkar-tab px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="morning">أذكار الصباح</button>
+                <button class="azkar-tab px-3 py-1.5 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="evening">أذكار المساء</button>
+            </div>
+
+            <!-- Azkar Scrollable Content -->
+            <div id="azkarContentList" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
+                <!-- Dynamically rendered -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: AUDIO SETTINGS ==================== -->
+    <div id="audioModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-emerald-600"></i>
+                    إعدادات الصوت ونغمات الأذان والتنبيه
+                </h3>
+                <button id="closeAudioModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        <span>مستوى صوت التنبيه والأذان</span>
+                        <span id="volumeValueLabel">80%</span>
+                    </div>
+                    <input id="masterVolumeSlider" type="range" min="0" max="100" value="80" class="w-full accent-emerald-600 cursor-pointer">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">سماع وتجربة أصوات التنبيه:</label>
+
+                    <div class="grid grid-cols-1 gap-2 text-xs">
+                        <button class="test-sound-row flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-slate-800 transition" data-sound="adhan">
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400">🕌 تكبيرات الأذان (Allahu Akbar)</span>
+                            <span class="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="play" class="w-3.5 h-3.5"></i> تجربة</span>
+                        </button>
+
+                        <button class="test-sound-row flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition" data-sound="bell">
+                            <span class="font-semibold">⏰ جرس رنان للمذاكرة (Bell)</span>
+                            <span class="text-indigo-600 font-bold flex items-center gap-1"><i data-lucide="play" class="w-3.5 h-3.5"></i> تجربة</span>
+                        </button>
+
+                        <button class="test-sound-row flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition" data-sound="chime">
+                            <span class="font-semibold">🔔 نغمة هادئة لطيفة (Chime)</span>
+                            <span class="text-indigo-600 font-bold flex items-center gap-1"><i data-lucide="play" class="w-3.5 h-3.5"></i> تجربة</span>
+                        </button>
+
+                        <button class="test-sound-row flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition" data-sound="digital">
+                            <span class="font-semibold">📟 منبه رقمي (Digital Beep)</span>
+                            <span class="text-indigo-600 font-bold flex items-center gap-1"><i data-lucide="play" class="w-3.5 h-3.5"></i> تجربة</span>
+                        </button>
+
+                        <button class="test-sound-row flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition" data-sound="energetic">
+                            <span class="font-semibold">⚡ تنبيه رياضي حماسي (Workout)</span>
+                            <span class="text-indigo-600 font-bold flex items-center gap-1"><i data-lucide="play" class="w-3.5 h-3.5"></i> تجربة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <button id="exportDataBtn" class="text-xs text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i> حفظ نسخة احتياطية
+                    </button>
+                    <button id="importDataBtn" class="text-xs text-slate-500 hover:text-slate-700 font-medium flex items-center gap-1">
+                        <i data-lucide="upload" class="w-3.5 h-3.5"></i> استعادة البيانات
+                    </button>
+                    <input type="file" id="importFileInput" class="hidden" accept=".json">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Reminder Banner / Popup Alert -->
+    <div id="activeAlertBanner" class="fixed bottom-6 right-6 left-6 sm:left-auto sm:w-96 z-50 bg-white dark:bg-slate-900 border-2 border-emerald-500 rounded-3xl p-5 shadow-2xl transition-all duration-300 translate-y-32 opacity-0 pointer-events-none">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex-shrink-0 flex items-center justify-center animate-bounce">
+                <i data-lucide="bell-ring" class="w-6 h-6"></i>
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">حان الموعد الآن!</span>
+                    <button id="dismissAlertBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <h4 id="alertTitle" class="text-base font-bold text-slate-900 dark:text-white mt-1">تذكير بالمهمة</h4>
+                <p id="alertNotes" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2"></p>
+                <div class="flex items-center gap-2 mt-3">
+                    <button id="completeAlertTaskBtn" class="flex-1 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
+                        تم الإنجاز بنجاح ✅
+                    </button>
+                    <button id="snoozeAlertTaskBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 text-xs font-semibold transition">
+                        تأجيل 5 دقائق
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-400 dark:text-slate-500">
+        <p>مُنظِّم — نبدأ بالصلاة لصلاح اليوم، وننظم الوقت بأعلى احترافية وإنجاز.</p>
+    </footer>
+
+    <!-- App Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
